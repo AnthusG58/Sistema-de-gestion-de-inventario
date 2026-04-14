@@ -1,0 +1,42 @@
+services:
+  db-sistema:
+    image: mysql:8.0.36
+    container_name: mysql_db
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: r00t_p4ssw0rd
+      MYSQL_DATABASE: tienda_db
+      TZ: "America/Guayaquil"
+    ports:
+      - "3307:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+      # ESPECIFICA EL NOMBRE DEL ARCHIVO AL FINAL:
+      - ./tienda_db.sql:/docker-entrypoint-initdb.d/init.sql
+    # Agregamos el healthcheck OBLIGATORIO para que "service_healthy" funcione
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-p$$MYSQL_ROOT_PASSWORD"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  sistema-app:
+    build: 
+      context: .
+      dockerfile: sistema/Dockerfile
+    container_name: fastapi_app
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./sistema:/app
+    environment:
+      - DATABASE_URL=mysql+pymysql://root:r00t_p4ssw0rd@db-sistema:3306/tienda_db
+      - DEBUG=True
+    depends_on:
+      db-sistema:
+        condition: service_healthy
+    command: uvicorn main:app --host 0.0.0.0 --port 8000 --reload
+
+# Declaramos formalmente el volumen persistente al final
+volumes:
+  mysql_data:

@@ -1,0 +1,15 @@
+# Ocultar la carpeta donde Docker guarda los datos de tu MySQL local
+db_data/
+mysql_data/
+
+# Ocultar entornos virtuales de Python
+venv/
+env/
+__pycache__/
+
+# Ocultar variables de entorno (contraseñas, API Keys)
+.env
+
+# IGNORAR ARCHIVOS DE NODE Y TAILWIND (¡La solución al error!)
+node_modules/
+package-lock.json

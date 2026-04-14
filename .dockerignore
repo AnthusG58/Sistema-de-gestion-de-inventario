@@ -1,0 +1,40 @@
+# =========================
+# ENTORNOS VIRTUALES
+# =========================
+# Ignoramos la carpeta que me mostraste y otras comunes
+env/
+venv/
+.env/
+
+# =========================
+# CACHÉ DE PYTHON
+# =========================
+# Ignora cualquier carpeta __pycache__ sin importar dónde se genere
+**/__pycache__/
+# Ignora archivos compilados de Python
+*.pyc
+*.pyo
+*.pyd
+
+# =========================
+# CACHÉ DE NODE.JS (Para Tailwind)
+# =========================
+# Si corres 'npm install' en tu PC local, no queremos que esa carpeta 
+# pise a la que Docker va a crear internamente
+node_modules/
+npm-debug.log
+package-lock.json
+
+# =========================
+# GIT Y CONFIGURACIONES DE EDITOR
+# =========================
+.git/
+.gitignore
+.vscode/
+.idea/
+
+# =========================
+# ARCHIVOS DEL SISTEMA OPERATIVO
+# =========================
+.DS_Store
+Thumbs.db

@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+
+{% block titulo %}Lista de Productos{% endblock %}
+{% block cabecera %}Inventario de Productos{% endblock %}
+
+{% block contenido %}
+<div class="bg-white rounded-xl shadow-md overflow-hidden border border-gray-100">
+    <div class="overflow-x-auto">
+        <table class="min-w-full divide-y divide-gray-200">
+            <thead class="bg-gray-800">
+                <tr>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">ID</th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">Nombre</th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">Precio</th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">Stock</th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">Caducidad</th>
+                </tr>
+            </thead>
+            <tbody class="bg-white divide-y divide-gray-200">
+                {% for producto in productos %}
+                <tr class="hover:bg-gray-50 transition-colors">
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ producto.id_producto }}</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{{ producto.nombre }}</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-green-600 font-bold">${{ producto.precio }}</td>
+                    <td class="px-6 py-4 whitespace-nowrap">
+                        <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full 
+                            {{ 'bg-red-100 text-red-800' if producto.stock < 5 else 'bg-green-100 text-green-800' }}">
+                            {{ producto.stock }} en almacén
+                        </span>
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                        {{ producto.fecha_caducidad if producto.fecha_caducidad else 'No aplica' }}
+                    </td>
+                </tr>
+                {% else %}
+                <tr>
+                    <td colspan="5" class="px-6 py-10 text-center text-gray-500">
+                        No hay productos registrados en la base de datos.
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,11 @@
+/* Importamos las capas base de Tailwind */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Aquí abajo puedes agregar tu propio CSS tradicional si alguna vez lo necesitas.
+Por ejemplo: 
+.mi-clase-personalizada { 
+    color: red; 
+}
+*/

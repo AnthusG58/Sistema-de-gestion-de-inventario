@@ -1,0 +1,11 @@
+{
+  "name": "sistema-fastapi",
+  "version": "1.0.0",
+  "description": "Desarrollo con FastAPI y Tailwind",
+  "scripts": {
+    "tailwind:watch": "npx tailwindcss -i ./static/src/input.css -o ./static/css/style.css --watch"
+  },
+  "devDependencies": {
+    "tailwindcss": "^3.4.1"
+  }
+}
