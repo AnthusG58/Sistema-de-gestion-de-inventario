@@ -8,7 +8,7 @@ sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from models import Producto
 
 # 1. Configuramos tu API Key
-API_KEY = os.getenv("GEMINI_API_KEY", "AIzaSyDuxBobiE3CZViADV27HEAx5oec9cr_-h8")
+API_KEY = os.getenv("GEMINI_API_KEY", "")
 genai.configure(api_key=API_KEY)
 
 # 2. AUTO-DESCUBRIMIENTO DEL MODELO MÁS RÁPIDO

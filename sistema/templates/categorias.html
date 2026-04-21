@@ -1,0 +1,118 @@
+{% extends "base.html" %}
+
+{% block titulo %}Categorías de Inventario{% endblock %}
+{% block cabecera %}Inventario por Categorías{% endblock %}
+
+{% block contenido %}
+<div x-data="categoriasApp()" x-init="iniciar()" class="max-w-6xl mx-auto p-4 sm:p-6">
+
+    <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-200 mb-6 flex flex-col sm:flex-row justify-between items-center gap-6 relative overflow-hidden">
+        
+        <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-blue-600 to-blue-400"></div>
+
+        <div class="flex-1">
+            <h2 class="text-2xl font-black text-gray-800 tracking-tight">Filtrar Productos</h2>
+            <p class="text-sm text-gray-500 mt-1">Selecciona una categoría para ver su stock disponible en tiempo real.</p>
+        </div>
+        
+        <div class="w-full sm:w-80 relative">
+            <div class="relative shadow-sm rounded-xl">
+                <select x-model="categoriaSeleccionada" @change="filtrarProductos()" 
+                        class="block appearance-none w-full bg-gray-50 border border-gray-200 text-gray-800 py-3.5 px-5 pr-10 rounded-xl font-semibold focus:outline-none focus:bg-white focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 transition-all cursor-pointer">
+                    <option value="0">🛒 Todas las categorías</option>
+                    <template x-for="cat in categorias" :key="cat.id_categoria">
+                        <option :value="cat.id_categoria" x-text="cat.nombre"></option>
+                    </template>
+                </select>
+                <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-5 text-gray-500">
+                    <svg class="fill-current h-5 w-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z"/></svg>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div x-show="cargando" class="flex justify-center py-12 transition-all" style="display: none;">
+        <div class="flex items-center gap-3 bg-white px-6 py-3 rounded-full shadow-sm border border-gray-100">
+            <div class="animate-spin rounded-full h-5 w-5 border-b-2 border-blue-600"></div>
+            <span class="text-gray-600 font-medium text-sm">Consultando base de datos...</span>
+        </div>
+    </div>
+
+    <div x-show="!cargando" class="bg-white rounded-2xl shadow-md border border-gray-200 overflow-hidden" style="display: none;">
+        <div class="overflow-x-auto">
+            <table class="w-full whitespace-nowrap text-left">
+                <thead class="bg-gray-900 text-white text-sm uppercase tracking-wider font-bold">
+                    <tr>
+                        <th class="px-8 py-6">ID</th>
+                        <th class="px-8 py-6">Producto</th>
+                        <th class="px-8 py-6">Stock</th>
+                        <th class="px-8 py-6">Precio</th>
+                        <th class="px-8 py-6 text-right">Estado</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-gray-100 text-base">
+                    
+                    <tr x-show="productos.length === 0">
+                        <td colspan="5" class="px-8 py-16 text-center">
+                            <div class="flex flex-col items-center justify-center text-gray-400">
+                                <svg class="w-12 h-12 mb-3 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4"></path></svg>
+                                <span class="text-base font-medium text-gray-500">No se encontraron productos en esta categoría.</span>
+                            </div>
+                        </td>
+                    </tr>
+
+                    <template x-for="prod in productos" :key="prod.id_producto">
+                        <tr class="hover:bg-blue-50/50 transition-colors duration-200 group">
+                            <td class="px-8 py-5 font-mono text-gray-400 group-hover:text-blue-500 transition-colors" x-text="'#' + prod.id_producto"></td>
+                            <td class="px-8 py-5 font-bold text-gray-800" x-text="prod.nombre"></td>
+                            <td class="px-8 py-5 text-gray-600 font-semibold">
+                                <span class="bg-gray-100 px-3 py-1 rounded-lg text-gray-700" x-text="prod.stock + ' uds'"></span>
+                            </td>
+                            <td class="px-8 py-5 text-gray-700 font-bold" x-text="'$' + prod.precio.toFixed(2)"></td>
+                            <td class="px-8 py-5 text-right">
+                                <span :class="prod.stock < 10 ? 'bg-red-50 text-red-700 border border-red-200 shadow-sm' : 'bg-emerald-50 text-emerald-700 border border-emerald-200 shadow-sm'" 
+                                      class="px-4 py-1.5 rounded-full text-xs font-black tracking-wide uppercase" 
+                                      x-text="prod.stock < 10 ? 'Stock Bajo' : 'Disponible'">
+                                </span>
+                            </td>
+                        </tr>
+                    </template>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<script>
+    function categoriasApp() {
+        return {
+            categorias: [],
+            productos: [],
+            categoriaSeleccionada: '0',
+            cargando: true,
+
+            async iniciar() {
+                try {
+                    const resCat = await fetch('/api/categorias/lista');
+                    this.categorias = await resCat.json();
+                    await this.filtrarProductos();
+                } catch (error) {
+                    console.error("Error iniciando app:", error);
+                }
+            },
+
+            async filtrarProductos() {
+                this.cargando = true;
+                try {
+                    const resProd = await fetch(`/api/categorias/productos/${this.categoriaSeleccionada}`);
+                    this.productos = await resProd.json();
+                } catch (error) {
+                    console.error("Error filtrando:", error);
+                } finally {
+                    this.cargando = false;
+                }
+            }
+        }
+    }
+</script>
+{% endblock %}

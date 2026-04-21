@@ -2,8 +2,8 @@ import os
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 
-# Tomamos la URL del docker-compose, si no existe usa una por defecto para evitar caídas
-DATABASE_URL = os.getenv("DATABASE_URL", "mysql+pymysql://root:r00t_p4ssw0rd@db-sistema:3306/tienda_db")
+# Agregamos ?charset=utf8mb4 al final de la URL por defecto para soportar tildes y ñ
+DATABASE_URL = os.getenv("DATABASE_URL", "mysql+pymysql://root:r00t_p4ssw0rd@db-sistema:3306/tienda_db?charset=utf8mb4")
 
 engine = create_engine(DATABASE_URL)
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)

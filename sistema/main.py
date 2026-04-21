@@ -2,7 +2,8 @@ from fastapi import FastAPI, Request, Depends
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 from sqlalchemy.orm import Session
-from pydantic import BaseModel  # <-- NUEVO: Necesario para leer el texto del chat
+from pydantic import BaseModel
+from controllers import categorias_controller  # <-- NUEVO: Necesario para leer el texto del chat
 import os
 
 # Importamos los archivos que creamos antes
@@ -51,3 +52,4 @@ async def api_chat_ia(datos_usuario: MensajeUsuario, db: Session = Depends(get_d
     # Extraemos el texto que escribió el usuario y se lo pasamos al controlador
     respuesta = await ia_controller.generar_respuesta_ia(datos_usuario.mensaje, db)
     return respuesta
+app.include_router(categorias_controller.router)
